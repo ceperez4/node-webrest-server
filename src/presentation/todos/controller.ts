@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CreateTodoDTO, UpdateTodoDTO } from "../../domain/dtos";
-import { CreateTodo, DeleteTodo, GetTodo, GetTodos, TodoRepository, UpdateTodo } from "../../domain";
+import { CreateTodo, CustomError, DeleteTodo, GetTodo, GetTodos, TodoRepository, UpdateTodo } from "../../domain";
 
 
 export class TodosController {
@@ -9,13 +9,23 @@ export class TodosController {
         private readonly todoRepository: TodoRepository
     ) { }
 
+    private handleError = (res: Response, error: unknown) => {
+        if (error instanceof CustomError) {
+            res.status(error.statusCode).json({ error: error.message });
+            return;
+        }
+        console.error(error)
+        res.status(500).json({ error: 'internal server error' });
+        return;
+    }
+
     /*********************************************************/
     /*********************************************************/
     public getTodos = (req: Request, res: Response) => {
         new GetTodos(this.todoRepository)
             .execute()
             .then(todos => res.json(todos))
-            .catch(error => res.status(400).json({ error }))
+            .catch(error => this.handleError(res, error))
     }
 
     /*********************************************************/
@@ -25,7 +35,7 @@ export class TodosController {
         new GetTodo(this.todoRepository)
             .execute(id)
             .then(todo => res.json(todo))
-            .catch(error => res.status(400).json({ error }))
+            .catch(error => this.handleError(res, error))
 
     }
 
@@ -40,8 +50,8 @@ export class TodosController {
         }
         new CreateTodo(this.todoRepository)
             .execute(createTodoDto!)
-            .then(todo => res.json(todo))
-            .catch(error => res.status(400).json({ error }))
+            .then(todo => res.status(201).json(todo))
+            .catch(error => this.handleError(res, error))
     }
 
     /*********************************************************/
@@ -58,7 +68,7 @@ export class TodosController {
         new UpdateTodo(this.todoRepository)
             .execute(updateTodoDto!)
             .then(todo => res.json(todo))
-            .catch(error => res.status(400).json({ error }))
+            .catch(error => this.handleError(res, error))
     }
 
     /*********************************************************/
@@ -68,6 +78,6 @@ export class TodosController {
         new DeleteTodo(this.todoRepository)
             .execute(id)
             .then(todo => res.json(todo))
-            .catch(error => res.status(400).json({ error }))
+            .catch(error => this.handleError(res, error))
     }
 }
