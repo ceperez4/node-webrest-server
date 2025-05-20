@@ -1,10 +1,9 @@
 import express, { Router } from 'express'
 import path from 'path';
-import { AppRoutes } from './routes';
 
 interface Options {
-    PORT: number,
-    PUBLIC_PATH?: string,
+    port: number,
+    public_path?: string,
     routes: Router
 }
 export class Server {
@@ -17,10 +16,10 @@ export class Server {
 
     constructor(options: Options) {
         const {
-            PORT, PUBLIC_PATH = 'public', routes
+            port, public_path = 'public', routes
         } = options;
-        this.port = PORT;
-        this.publicPath = PUBLIC_PATH;
+        this.port = port;
+        this.publicPath = public_path;
         this.routes = routes
     }
 
