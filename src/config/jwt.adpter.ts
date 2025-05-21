@@ -1,4 +1,4 @@
-import { sign, } from 'jsonwebtoken'
+import { sign, verify, } from 'jsonwebtoken'
 import type { StringValue } from "ms";
 import { envs } from './envs';
 
@@ -16,6 +16,11 @@ export class JwtAdapter {
     }
 
     static validateToken(token: string) {
-
+        try {
+            const decodedToken = verify(token, JWT_SEED);
+            return decodedToken
+        } catch {
+            return null
+        }
     }
 }
