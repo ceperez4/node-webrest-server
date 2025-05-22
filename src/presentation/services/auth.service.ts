@@ -111,8 +111,8 @@ export class AuthService {
             subject: 'Validate your email',
             htmlBody: html,
         }
-        //const isSend = await this.emailService.sendEmail(options)
-        //if (!isSend) throw CustomError.internalServer('Error sending email');
+        const isSend = await this.emailService.sendEmail(options)
+        if (!isSend) throw CustomError.internalServer('Error sending email');
         console.log(link)
         return true;
     }

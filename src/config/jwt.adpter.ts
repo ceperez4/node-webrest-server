@@ -15,10 +15,10 @@ export class JwtAdapter {
         return jwt
     }
 
-    static validateToken(token: string) {
+    static validateToken<T>(token: string): T | null {
         try {
             const decodedToken = verify(token, JWT_SEED);
-            return decodedToken
+            return decodedToken as T
         } catch {
             return null
         }
